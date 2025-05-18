@@ -46,6 +46,7 @@
 #include <pthread.h>
 
 #include <nbdkit-filter.h>
+#include <zstd.h>
 
 #include "cleanup.h"
 #include "poll.h"
@@ -415,8 +416,8 @@ tar_cache (nbdkit_next *next,
 }
 
 static struct nbdkit_filter filter = {
-  .name               = "tar",
-  .longname           = "nbdkit tar filter",
+  .name               = "unzstd",
+  .longname           = "nbdkit unzstd filter",
   .config             = tar_config,
   .config_complete    = tar_config_complete,
   .config_help        = tar_config_help,

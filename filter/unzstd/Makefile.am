@@ -31,34 +31,34 @@
 
 include $(top_srcdir)/common-rules.mk
 
-EXTRA_DIST = nbdkit-tar-filter.pod
+EXTRA_DIST = nbdkit-unzstd-filter.pod
 
 # Requires open_memstream.
 if !IS_WINDOWS
 
-filter_LTLIBRARIES = nbdkit-tar-filter.la
+filter_LTLIBRARIES = nbdkit-unzstd-filter.la
 
-nbdkit_tar_filter_la_SOURCES = \
-	tar.c \
+nbdkit_unzstd_filter_la_SOURCES = \
+	unzstd.c \
 	$(top_srcdir)/include/nbdkit-filter.h \
 	$(NULL)
 
-nbdkit_tar_filter_la_CPPFLAGS = \
+nbdkit_unzstd_filter_la_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_builddir)/include \
 	-I$(top_srcdir)/common/include \
 	-I$(top_srcdir)/common/replacements \
 	-I$(top_srcdir)/common/utils \
 	$(NULL)
-nbdkit_tar_filter_la_CFLAGS = $(WARNINGS_CFLAGS)
-nbdkit_tar_filter_la_LDFLAGS = \
+nbdkit_unzstd_filter_la_CFLAGS = $(WARNINGS_CFLAGS)
+nbdkit_unzstd_filter_la_LDFLAGS = \
 	-module -avoid-version -shared $(NO_UNDEFINED_ON_WINDOWS) \
 	$(NULL)
 if USE_LINKER_SCRIPT
-nbdkit_tar_filter_la_LDFLAGS += \
+nbdkit_unzstd_filter_la_LDFLAGS += \
 	-Wl,--version-script=$(top_srcdir)/filters/filters.syms
 endif
-nbdkit_tar_filter_la_LIBADD = \
+nbdkit_unzstd_filter_la_LIBADD = \
 	$(top_builddir)/common/utils/libutils.la \
 	$(top_builddir)/common/replacements/libcompat.la \
 	$(IMPORT_LIBRARY_ON_WINDOWS) \
@@ -66,10 +66,10 @@ nbdkit_tar_filter_la_LIBADD = \
 
 if HAVE_POD
 
-man_MANS = nbdkit-tar-filter.1
+man_MANS = nbdkit-unzstd-filter.1
 CLEANFILES += $(man_MANS)
 
-nbdkit-tar-filter.1: nbdkit-tar-filter.pod \
+nbdkit-unzstd-filter.1: nbdkit-unzstd-filter.pod \
 		$(top_builddir)/podwrapper.pl
 	$(PODWRAPPER) --section=1 --man $@ \
 	    --html $(top_builddir)/html/$@.html \
