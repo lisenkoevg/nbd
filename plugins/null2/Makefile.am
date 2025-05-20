@@ -31,55 +31,41 @@
 
 include $(top_srcdir)/common-rules.mk
 
-EXTRA_DIST = nbdkit-unzstd-filter.pod
+EXTRA_DIST = nbdkit-null2-plugin.pod
 
-# Requires open_memstream.
-if !IS_WINDOWS
+plugin_LTLIBRARIES = nbdkit-null2-plugin.la
 
-filter_LTLIBRARIES = nbdkit-unzstd-filter.la
-
-nbdkit_unzstd_filter_la_SOURCES = \
-	unzstd.c \
-	$(top_srcdir)/include/nbdkit-filter.h \
+nbdkit_null2_plugin_la_SOURCES = \
+	null2.c \
+	$(top_srcdir)/include/nbdkit-plugin.h \
 	$(NULL)
 
-nbdkit_unzstd_filter_la_CPPFLAGS = \
+nbdkit_null2_plugin_la_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-I$(top_builddir)/include \
-	-I$(top_srcdir)/common/include \
-	-I$(top_srcdir)/common/replacements \
-	-I$(top_srcdir)/common/utils \
 	$(NULL)
-nbdkit_unzstd_filter_la_CFLAGS = $(WARNINGS_CFLAGS)
-nbdkit_unzstd_filter_la_LDFLAGS = \
+nbdkit_null2_plugin_la_CFLAGS = $(WARNINGS_CFLAGS)
+nbdkit_null2_plugin_la_LIBADD = \
+	$(IMPORT_LIBRARY_ON_WINDOWS) \
+	$(NULL)
+nbdkit_null2_plugin_la_LDFLAGS = \
 	-module -avoid-version -shared $(NO_UNDEFINED_ON_WINDOWS) \
 	$(NULL)
 if USE_LINKER_SCRIPT
-nbdkit_unzstd_filter_la_LDFLAGS += \
-	-Wl,--version-script=$(top_srcdir)/filters/filters.syms
+nbdkit_null2_plugin_la_LDFLAGS += \
+	-Wl,--version-script=$(top_srcdir)/plugins/plugins.syms
 endif
-nbdkit_unzstd_filter_la_LIBADD = \
-	$(top_builddir)/common/utils/libutils.la \
-	$(top_builddir)/common/replacements/libcompat.la \
-	$(IMPORT_LIBRARY_ON_WINDOWS) \
-	$(NULL)
 
 if HAVE_POD
 
-man_MANS = nbdkit-unzstd-filter.1
+man_MANS = nbdkit-null2-plugin.1
 CLEANFILES += $(man_MANS)
 
-nbdkit-unzstd-filter.1: nbdkit-unzstd-filter.pod \
+nbdkit-null2-plugin.1: nbdkit-null2-plugin.pod \
 		$(top_builddir)/podwrapper.pl
 	$(PODWRAPPER) --section=1 --man $@ \
+	    --insert $(top_srcdir)/docs/magic-parameter.txt:__IS_MAGIC__ \
 	    --html $(top_builddir)/html/$@.html \
 	    $<
 
 endif HAVE_POD
-
-if HAVE_LIBZSTD
-  nbdkit_unzstd_filter_la_CFLAGS += $(LIBZSTD_CFLAGS)
-  nbdkit_unzstd_filter_la_LIBADD += $(LIBZSTD_LIBS)
-endif
-
-endif !IS_WINDOWS
