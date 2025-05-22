@@ -31,6 +31,7 @@
 #include "minmax.h"
 #include "nbdcopy.h"
 
+#include "unzstd.h"
 /* Fill a range in dst with zeroes.  This is called from the copying
  * loop when we see a zero range in the source.  Depending on the
  * command line flags this could mean:
@@ -83,6 +84,9 @@ synch_copying (void)
     size_t r;
 
     while ((r = src->ops->synch_read (src, buf, request_size, offset)) > 0) {
+      if (zstd) {
+
+      }
       update_blkhash ((const char *) buf, offset, r);
       dst->ops->synch_write (dst, buf, r, offset);
       offset += r;

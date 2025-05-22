@@ -1,3 +1,5 @@
 tmp
 *.swp
 Makefile.in
+Session.vim
+main

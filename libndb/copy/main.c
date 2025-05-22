@@ -72,6 +72,7 @@ struct rw *src, *dst;               /* The source and destination. */
 bool verbose;                       /* --verbose flag */
 bool zstd;                          /* --zstd flag */
 
+
 const char *prog;                   /* program name (== basename argv[0]) */
 
 static bool is_nbd_uri (const char *s);
