@@ -182,54 +182,20 @@ static int tar_pwrite(nbdkit_next *next, void *handle, const void *buf,
                       uint32_t count, uint64_t offs, uint32_t flags, int *err) {
   struct handle *h = handle;
 
-  ZSTD_inBuffer input = {buf, count, 0};
-  ZSTD_outBuffer output = {bufOut, bufOutSize, 0};
-  size_t const ret = ZSTD_decompressStream(dctx, &output, &input);
+  size_t const ret = ZSTD_decompress(bufOut, bufOutSize, buf, count);
+  if (ZSTD_isError(ret)) {
+    // TODO handle error
+    if (unzstd_debug_flag)
+      nbdkit_debug("ZSTD_isError");
+  }
   size_t unzstd_offs = h->offset;
-  uint32_t unzstd_count = output.pos;
-  h->offset += output.pos;
+  uint32_t unzstd_count = ret;
+  h->offset += ret;
 
   if (unzstd_debug_flag)
     nbdkit_debug("decompress, ret=%lu, input offs/count:%lu/%u unzstd offs/count:%lu/%u", ret, offs, count, unzstd_offs, unzstd_count);
   return next->pwrite(next, bufOut, unzstd_count, unzstd_offs, flags, err);
 }
-
-#if 0
-/* Write data to the file. */
-static int tar_pwrite_(nbdkit_next *next, void *handle, const void *buf,
-                       uint32_t count, uint64_t offs, uint32_t flags,
-                       int *err) {
-  struct handle *h = handle;
-  if (unzstd_debug_flag) {
-    nbdkit_debug("count %u", count);
-    char *tmp = strndup(buf, count);
-    nbdkit_debug("buf %s", tmp);
-    free(tmp);
-  }
-
-  if (unzstd_debug_flag)
-    nbdkit_debug("count=%u offs=%lu h->offset=%lu h->size=%lu", count, offs,
-                 h->offset, h->size);
-
-  //   zstd_decompress();
-  ZSTD_inBuffer input = {buf, count, 0};
-  //   while (input.pos < input.size) {
-  if (unzstd_debug_flag)
-    nbdkit_debug("input.pos=%u input.size=%lu h->offset=%lu h->size=%lu", count,
-                 offs, h->offset, h->size);
-  ZSTD_outBuffer output = {bufOut, bufOutSize, 0};
-  size_t const ret = ZSTD_decompressStream(dctx, &output, &input);
-  if (unzstd_debug_flag)
-    nbdkit_debug("bufOut->size=%lu bufOutSize=%lu", bufOut->size, bufOutSize);
-  fwrite(bufOut, 1, output.pos, fdebug);
-  return next->pwrite(next, bufOut, count, offs, flags, err);
-  //   }
-
-  //   if (unzstd_debug_flag)
-  //     nbdkit_debug("call next->pwrite count=%u", count);
-  //   return next->pwrite(next, buf, count, offs + h->offset, flags, err);
-}
-#endif
 
 static struct nbdkit_filter filter = {
     .name = "unzstd",
