@@ -70,6 +70,7 @@ bool synchronous;                   /* --synchronous flag */
 unsigned threads;                   /* --threads */
 struct rw *src, *dst;               /* The source and destination. */
 bool verbose;                       /* --verbose flag */
+bool zstd;                          /* --zstd flag */
 
 const char *prog;                   /* program name (== basename argv[0]) */
 
@@ -91,6 +92,7 @@ usage (FILE *fp, int exitcode)
 "            [--queue-size=N] [--request-size=N] [-R N|--requests=N]\n"
 "            [-S N|--sparse=N] [--synchronous] [-T N|--threads=N] \n"
 "            [-v|--verbose]\n"
+"            [-z|--zstd]\n"
 "            SOURCE DESTINATION\n"
 "\n"
 "    SOURCE, DESTINATION := - | FILE | DEVICE | NBD-URI | [ CMD ARGS ... ]\n"
@@ -130,6 +132,7 @@ main (int argc, char *argv[])
     QUEUE_SIZE_OPTION,
     REQUEST_SIZE_OPTION,
     SYNCHRONOUS_OPTION,
+    ZSTD_OPTION,
   };
   const char *short_options = "C:pR:S:T:vV";
   const struct option long_options[] = {
@@ -152,6 +155,7 @@ main (int argc, char *argv[])
     { "target-is-zero",      no_argument,       NULL, TARGET_IS_ZERO_OPTION },
     { "threads",             required_argument, NULL, 'T' },
     { "verbose",             no_argument,       NULL, 'v' },
+    { "zstd",                no_argument,       NULL, ZSTD_OPTION },
     { "version",             no_argument,       NULL, 'V' },
     { NULL }
   };
@@ -350,6 +354,10 @@ main (int argc, char *argv[])
 
     case 'v':
       verbose = true;
+      break;
+
+    case 'z':
+      zstd = true;
       break;
 
     case 'V':
