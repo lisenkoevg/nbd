@@ -10,7 +10,7 @@ make -s > /dev/null \
   && sudo make install >/dev/null \
   && zstd < sample > sample.zt \
   && dd if=/dev/zero of=file.img bs=1 count=$file_size status=none \
-  && nbdkit -P nbdkit.pid -D unzstd.flag=1 --filter=unzstd file file.img $VERBOSE \
+  && nbdkit -P nbdkit.pid -D unzstd.flag=1 --filter=unzstd file file.img $V \
   && nbdcopy - nbd://localhost < sample.zt \
   && diff -qs <(head -c $sample_size file.img) sample \
   ; kill_nbdkit nbdkit.pid
