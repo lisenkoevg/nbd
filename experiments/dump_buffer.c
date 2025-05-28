@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void dump_buffer(const void *buf, size_t size) {
+char *dump_buffer_str(const void *buf, const size_t size) {
   char tmp_f[10];
   char *tmp = (char *)calloc(size * 4, 1);
 
@@ -12,10 +12,14 @@ void dump_buffer(const void *buf, size_t size) {
     strcat(tmp, tmp_f);
   }
   strcat(tmp, "\n");
-  fprintf(stderr, "dump_buffer(size=%lu):\n%s\n", size, tmp);
-  free(tmp);
+  return tmp;
 }
 
+void dump_buffer(const void *buf, const size_t size) {
+  char *s = dump_buffer_str(buf, size);
+  fprintf(stderr, "%s", s);
+  free((void *)s);
+}
 
 #ifdef TEST_DUMP_BUFFER
 #define SIZE 50
