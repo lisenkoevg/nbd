@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Read arbitrary lenght input from stdin.
 // Returns C-style string.
