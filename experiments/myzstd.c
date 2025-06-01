@@ -18,13 +18,12 @@
 #define COMPRESSION_LEVEL 3 // default compression level according to MAN zstd(1)
 
 int main() {
-  char *src = read_input();
-  size_t srcSize = strlen(src);
-
-  size_t dstCapacity = ZSTD_compressBound(srcSize);
+  size_t sz = 0;
+  char *src = read_input(0, &sz);
+#if 1
+  size_t dstCapacity = ZSTD_compressBound(sz);
   char *dst = malloc(dstCapacity);
-
-  const size_t ret = ZSTD_compress(dst, dstCapacity, src, srcSize, COMPRESSION_LEVEL);
+  const size_t ret = ZSTD_compress(dst, dstCapacity, src, sz, COMPRESSION_LEVEL);
 
   if (ZSTD_isError(ret)) {
     fprintf(stderr, "Error: %s\n", ZSTD_getErrorName(ret));
@@ -33,7 +32,7 @@ int main() {
   for (size_t i = 0; i != ret; ++i) {
     putchar(*(dst + i));
   }
-
+#endif
 #if 0
   if (not pipe) {
     fprintf(stderr, "No write to stdout\n");

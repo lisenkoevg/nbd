@@ -13,5 +13,5 @@ zstd_compress_bound: zstd_compress_bound.c
 dump_buffer: dump_buffer.c
 	gcc -DTEST_DUMP_BUFFER $^ -o $@
 
-myzstd: myzstd.c
-	gcc $(CFLAGS) $^ -o $@ $(LIB)
+myzstd: myzstd.c read_input.h
+	gcc $(CFLAGS) $< -o $@ $(LIB)
