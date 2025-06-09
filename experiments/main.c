@@ -10,7 +10,8 @@
 char *read_input();
 
 int main() {
-  char *src = read_input();
+  size_t *size;
+  char *src = read_input(0, size);
 //   printf("Input length: %lu bytes\n", strlen(src));
 #if 1
   const int compressLevel = 3;
