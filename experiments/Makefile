@@ -12,8 +12,8 @@ $(obj): $(obj).c
 zstd_compress_bound: zstd_compress_bound.c
 	gcc $^ -o $@ $(LIB)
 
-dbg: dbg.c
-	gcc -DTEST_DUMP_BUFFER $^ -o $@
+dbg: dbg.c dbg.h
+	gcc -DTEST_DBG -DDBG -DNBDCOPY_H $^ -o $@
 
 myzstd: myzstd.c read_input.h
 	gcc $(CFLAGS) $< -o $@ $(LIB)
